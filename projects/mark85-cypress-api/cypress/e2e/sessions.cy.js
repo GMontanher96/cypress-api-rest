@@ -2,14 +2,22 @@ describe('POST /sessions', ()=> {
 
     it('user session', () => {
 
-        const user = {
+        const userData = {
+            name: 'montanher',
             email: "gabrielmontanherr@gmail.com",
             password: "123456"
         }
 
-        cy.postSession(user)
+        cy.postSession(userData)
             .then(response => {
+
+                const {user, token} = response.body
+
                 expect(response.status).to.eq(200)
+                expect(user.name).to.eq(userData.name)
+                expect(user.email).to.eq(userData.email)
+                expect(token).not.to.be.empty
+
             })
     })
 
@@ -42,7 +50,7 @@ Cypress.Commands.add('postSession', (user) => {
     cy.api({
         url: '/sessions',
         method: 'POST',
-        body: user,
+        body: { email: user.email, password: user.password },
         failOnStatusCode: false
     }).then(response => { return response })
 })
